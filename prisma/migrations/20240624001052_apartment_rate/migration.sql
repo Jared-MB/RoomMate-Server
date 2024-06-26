@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Apartment" ADD COLUMN     "rate" DOUBLE PRECISION NOT NULL DEFAULT 0;
