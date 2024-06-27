@@ -28,7 +28,7 @@ export class ApartmentService {
                 include: {
                     lessor: true,
                     images: true,
-                    universities: true
+
                 }
             });
         }
@@ -47,7 +47,7 @@ export class ApartmentService {
                 include: {
                     lessor: true,
                     images: true,
-                    universities: true
+
                 }
             });
         }
@@ -68,13 +68,6 @@ export class ApartmentService {
             include: {
                 lessor: true,
                 images: true,
-                universities: {
-                    select: {
-                        lat: true,
-                        id: true,
-                        lng: true
-                    }
-                }
             }
         });
         return {
@@ -86,7 +79,7 @@ export class ApartmentService {
         }
     }
 
-    createApartment(data: CreateApartmentDto, images: { id: string, url: string }[], universities: { lat: number, lng: number }[]) {
+    createApartment(data: CreateApartmentDto, images: { id: string, url: string }[]) {
         return this.prismaService.apartment.create({
             data: {
                 address: data.address,
@@ -116,11 +109,6 @@ export class ApartmentService {
                 images: {
                     createMany: {
                         data: images
-                    }
-                },
-                universities: {
-                    createMany: {
-                        data: universities
                     }
                 }
             }

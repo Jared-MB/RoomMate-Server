@@ -19,8 +19,4 @@ export class CreateApartmentDto {
     shortDescription: string
     longDescription: string
     rooms: number
-    universities: {
-        lat: string
-        lng: string
-    }
 }

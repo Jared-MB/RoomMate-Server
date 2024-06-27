@@ -19,8 +19,8 @@ enum Type {
 }
 
 model Apartment {
-  id               String       @id @default(uuid())
-  type             Type         @default(APARTMENT)
+  id               String   @id @default(uuid())
+  type             Type     @default(APARTMENT)
   price            Float
   address          String
   isPetFriendly    Boolean
@@ -29,15 +29,14 @@ model Apartment {
   isSharedKitchen  Boolean
   lat              Float
   lng              Float
-  rate             Float        @default(0)
-  lessor           Lessor       @relation(fields: [lessorId], references: [id])
+  rate             Float    @default(0)
+  lessor           Lessor   @relation(fields: [lessorId], references: [id])
   lessorId         String
   tenants          Tenant[]
   images           Image[]
-  shortDescription String       @default("")
-  longDescription  String       @default("")
-  rooms            Int          @default(1)
-  universities     University[]
+  shortDescription String   @default("")
+  longDescription  String   @default("")
+  rooms            Int      @default(1)
 }
 
 model Tenant {
@@ -51,11 +50,10 @@ model Tenant {
 }
 
 model University {
-  id          String    @id @default(uuid())
-  lat         Float
-  lng         Float
-  apartment   Apartment @relation(fields: [apartmentId], references: [id])
-  apartmentId String
+  id   String @id @default(uuid())
+  lat  Float
+  lng  Float
+  name String @default("")
 }
 
 model Lessor {

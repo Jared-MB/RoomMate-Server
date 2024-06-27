@@ -82,7 +82,7 @@ export class ApartmentController {
             isSharedBathroom: (createApartmentDto.isSharedBathroom as any) === 'true',
             isSharedKitchen: (createApartmentDto.isSharedKitchen as any) === 'true',
             lessor
-        }, images, JSON.parse(createApartmentDto.universities as any) as any)
+        }, images)
 
 
         return apartment
