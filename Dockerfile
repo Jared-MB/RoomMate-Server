@@ -2,7 +2,7 @@
 FROM node:20.12.2
 
 # Set the working directory
-WORKDIR .
+WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -15,6 +15,9 @@ RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application code
 COPY . .
+
+# Generate Prisma client
+RUN pnpm prisma generate
 
 # Build the application
 RUN pnpm run build
