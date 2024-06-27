@@ -18,4 +18,9 @@ export class CreateApartmentDto {
     lessor: CreateLessorDto
     shortDescription: string
     longDescription: string
+    rooms: number
+    universities: {
+        lat: string
+        lng: string
+    }
 }

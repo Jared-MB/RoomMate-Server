@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services';
 import { CreateApartmentDto } from '../dto';
+import { ApartmentSearch } from '../interfaces/apartment-query';
 
 @Injectable()
 export class ApartmentService {
@@ -9,13 +10,47 @@ export class ApartmentService {
         private readonly prismaService: PrismaService
     ) { }
 
-    async getApartments() {
-        const apartments = await this.prismaService.apartment.findMany({
-            include: {
-                lessor: true,
-                images: true
-            },
-        });
+    async getApartments(query: ApartmentSearch) {
+        const { maxPrice, minPrice, isApartment, isHouse, ...search } = query
+        const type = []
+        if (isApartment) {
+            type.push('APARTMENT')
+        }
+        if (isHouse) {
+            type.push('HOUSE')
+        }
+        if (!isApartment && !isHouse) {
+            type.push('APARTMENT', 'HOUSE')
+        }
+        let apartments = []
+        if (Object.keys(query).length === 0) {
+            apartments = await this.prismaService.apartment.findMany({
+                include: {
+                    lessor: true,
+                    images: true,
+                    universities: true
+                }
+            });
+        }
+        else {
+            apartments = await this.prismaService.apartment.findMany({
+                where: {
+                    ...search,
+                    price: {
+                        gte: minPrice,
+                        lte: maxPrice
+                    },
+                    type: {
+                        in: type
+                    }
+                },
+                include: {
+                    lessor: true,
+                    images: true,
+                    universities: true
+                }
+            });
+        }
         return apartments.map(apartment => ({
             ...apartment,
             lessor: {
@@ -32,7 +67,14 @@ export class ApartmentService {
             },
             include: {
                 lessor: true,
-                images: true
+                images: true,
+                universities: {
+                    select: {
+                        lat: true,
+                        id: true,
+                        lng: true
+                    }
+                }
             }
         });
         return {
@@ -44,7 +86,7 @@ export class ApartmentService {
         }
     }
 
-    createApartment(data: CreateApartmentDto, images: { id: string, url: string }[]) {
+    createApartment(data: CreateApartmentDto, images: { id: string, url: string }[], universities: { lat: number, lng: number }[]) {
         return this.prismaService.apartment.create({
             data: {
                 address: data.address,
@@ -58,6 +100,7 @@ export class ApartmentService {
                 isSharedKitchen: data.isSharedKitchen,
                 lat: data.lat,
                 lng: data.lng,
+                rooms: +data.rooms,
                 lessor: {
                     connectOrCreate: {
                         create: {
@@ -73,6 +116,11 @@ export class ApartmentService {
                 images: {
                     createMany: {
                         data: images
+                    }
+                },
+                universities: {
+                    createMany: {
+                        data: universities
                     }
                 }
             }

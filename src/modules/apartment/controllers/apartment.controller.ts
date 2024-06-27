@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ApartmentService } from '../services/apartment.service';
 import { CreateApartmentDto } from '../dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ImageService } from '../services/image.service';
+import type { ApartmentQuery, ApartmentSearch } from '../interfaces/apartment-query';
 
 @Controller('apartment')
 export class ApartmentController {
@@ -13,8 +14,20 @@ export class ApartmentController {
     ) { }
 
     @Get()
-    async getApartments() {
-        return await this.apartmentService.getApartments()
+    async getApartments(
+        @Query() query: ApartmentQuery
+    ) {
+        const mappedQuery = Object.entries(query).reduce((acc, [key, value]) => {
+            if (value === 'true') {
+                acc[key] = true
+            }
+            else if (key === 'minPrice' || key === 'maxPrice') {
+                acc[key] = +value
+            }
+            return acc
+        }
+            , {} as ApartmentSearch)
+        return await this.apartmentService.getApartments(mappedQuery)
     }
 
     @Get(':id')
@@ -69,7 +82,7 @@ export class ApartmentController {
             isSharedBathroom: (createApartmentDto.isSharedBathroom as any) === 'true',
             isSharedKitchen: (createApartmentDto.isSharedKitchen as any) === 'true',
             lessor
-        }, images)
+        }, images, JSON.parse(createApartmentDto.universities as any) as any)
 
 
         return apartment
