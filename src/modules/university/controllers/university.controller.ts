@@ -14,6 +14,7 @@ export class UniversityController {
         return this.universityService.findAll()
     }
 
+
     @Post()
     async createUniversity(
         @Body() university: CreateUniversityDto

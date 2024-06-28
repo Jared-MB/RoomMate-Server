@@ -10,7 +10,11 @@ export class UniversityService {
     ) { }
 
     findAll() {
-        return this.prismaService.university.findMany()
+        return this.prismaService.university.findMany({
+            orderBy: {
+                name: 'asc'
+            }
+        })
     }
 
     create(university: CreateUniversityDto) {
